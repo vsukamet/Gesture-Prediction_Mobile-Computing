@@ -30,7 +30,7 @@ def json_to_dataframe(packet):
             temp.append(x)
             temp.append(y)
         all_frames.append(temp)
-    print(len(all_frames))
+    # print(len(all_frames))
     data_frame = pd.DataFrame(all_frames)
     return data_frame
 
@@ -64,7 +64,7 @@ def home():
 @app.route('/predict_api',methods=['POST'])
 def predict_api():
     json_data = request.get_json(force=True)
-    print(type(json_data))
+    # print(type(json_data))
     data_frame = json_to_dataframe(json_data)
     test_data = data_frame.values
     test_data = scale_model.transform(test_data)
