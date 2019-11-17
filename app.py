@@ -40,9 +40,9 @@ def max_count(predictions):
     result = [i for i in res_dict if res_dict[i] == res_max]
     return result
 
-# @app.route('/')
-# def home():
-#     return render_template('home.html')
+@app.route('/',methods=['GET'] )
+def home():
+    return 'deployed'
 
 # @app.route('/predict',methods=['POST'])
 # def predict():
