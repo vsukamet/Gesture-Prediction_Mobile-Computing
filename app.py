@@ -40,15 +40,14 @@ def max_count(predictions):
     result = [i for i in res_dict if res_dict[i] == res_max]
     return result
 
-@app.route('/')
-def home():
-    return render_template('home.html')
+# @app.route('/')
+# def home():
+#     return render_template('home.html')
 
 # @app.route('/predict',methods=['POST'])
 # def predict():
 #     default_name = 'experience'
 #     json_data = request.form.to_dict(flat=False)
-#
 #     data_frame = json_to_dataframe(json_data)
 #     test_data = data_frame.values
 #     test_data = scale_model.transform(test_data)
@@ -61,7 +60,7 @@ def home():
 #     output = {'1':ges_list[model1_res[0]], '2':ges_list[model2_res[0]], '3':ges_list[model3_res[0]]}
 #     return render_template('home.html', prediction_text='Prediction is {}'.format(output))
 
-@app.route('/predict_api',methods=['POST'])
+@app.route('/',methods=['POST'])
 def predict_api():
     json_data = request.get_json(force=True)
     # print(type(json_data))
