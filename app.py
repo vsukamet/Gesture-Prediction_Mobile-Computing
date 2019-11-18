@@ -17,28 +17,47 @@ scale_model = pickle.load(open('Scaled_model.pkl','rb'))
 ges_list = {1:'buy', 2:'communicate', 3:'fun', 4:'hope', 5:'mother', 6:'really'}
 
 
+# def json_to_dataframe(packet):
+#     all_frames = []
+#     for frame in packet:
+#         temp = []
+#         row = list(frame.values())
+#         overall_score = row[0]
+#         temp.append(overall_score)
+#         for key_points in row[1]:
+#             vals = list(key_points.values())
+#             temp.append(vals[0])
+#             print("The test debug",vals)
+#             print("The vals[2]",vals[2])
+#             vals[2] = str(vals[2])
+#             if type(vals[2]) is str:
+#                 vals[2] = eval(vals[2])
+#             x, y = list(vals[2].values())
+#             temp.append(x)
+#             temp.append(y)
+#         all_frames.append(temp)
+#     # print(len(all_frames))
+#     data_frame = pd.DataFrame(all_frames)
+#     return data_frame
+
 def json_to_dataframe(packet):
     all_frames = []
-    for frame in packet:
+    for i in range(len(packet)):
         temp = []
-        row = list(frame.values())
-        overall_score = row[0]
-        temp.append(overall_score)
-        for key_points in row[1]:
-            vals = list(key_points.values())
-            temp.append(vals[0])
-            print("The test debug",vals)
-            print("The vals[2]",vals[2])
-            vals[2] = str(vals[2])
-            if type(vals[2]) is str:
-                vals[2] = eval(vals[2])
-            x, y = list(vals[2].values())
+        current_frame = packet[i]
+        temp.append(current_frame['score'])
+        key_points = current_frame['keypoints']
+        for j in range(len(key_points)):
+            parts = key_points[j]
+            temp.append(parts['score'])
+            position = parts['position']
+            x, y = list(position.values())
             temp.append(x)
             temp.append(y)
         all_frames.append(temp)
-    # print(len(all_frames))
     data_frame = pd.DataFrame(all_frames)
     return data_frame
+
 
 def max_count(predictions):
     res_dict = Counter(predictions)
@@ -68,7 +87,7 @@ def max_count(predictions):
 
 @app.route('/',methods=['POST'])
 def predict_api():
-    json_data = request.get_json(force=True)
+    json_data = request.get_json()
     # print(type(json_data))
     data_frame = json_to_dataframe(json_data)
     test_data = data_frame.values
