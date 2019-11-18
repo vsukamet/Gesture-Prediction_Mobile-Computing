@@ -1,45 +1,24 @@
 from collections import Counter
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import pandas as pd
 import pickle
-import ast
-
-
 
 app = Flask(__name__)
 
-model1 = pickle.load(open('DT1.pkl', 'rb'))
-model2 = pickle.load(open('XGB1.pkl', 'rb'))
-model3 = pickle.load(open('MLP1.pkl', 'rb'))
-model4= pickle.load(open('LR1.pkl', 'rb'))
+""" Getting all the pickle files(must present in same directory)
+    which gives the trained Machine-learning Models """
+
+model1 = pickle.load(open('DT.pkl', 'rb'))
+model2 = pickle.load(open('XGB.pkl', 'rb'))
+model3 = pickle.load(open('MLP.pkl', 'rb'))
+model4= pickle.load(open('LR.pkl', 'rb'))
 pca_model = pickle.load(open('pca_model.pkl','rb'))
-scale_model = pickle.load(open('Scaled_model1.pkl','rb'))
+scale_model = pickle.load(open('Scaled_model.pkl','rb'))
+
 ges_list = {1:'buy', 2:'communicate', 3:'fun', 4:'hope', 5:'mother', 6:'really'}
 
 
-# def json_to_dataframe(packet):
-#     all_frames = []
-#     for frame in packet:
-#         temp = []
-#         row = list(frame.values())
-#         overall_score = row[0]
-#         temp.append(overall_score)
-#         for key_points in row[1]:
-#             vals = list(key_points.values())
-#             temp.append(vals[0])
-#             print("The test debug",vals)
-#             print("The vals[2]",vals[2])
-#             vals[2] = str(vals[2])
-#             if type(vals[2]) is str:
-#                 vals[2] = eval(vals[2])
-#             x, y = list(vals[2].values())
-#             temp.append(x)
-#             temp.append(y)
-#         all_frames.append(temp)
-#     # print(len(all_frames))
-#     data_frame = pd.DataFrame(all_frames)
-#     return data_frame
-
+""" Function to convert the given json-object to data-frame """
 def json_to_dataframe(packet):
     all_frames = []
     for i in range(len(packet)):
@@ -65,34 +44,22 @@ def max_count(predictions):
     result = [i for i in res_dict if res_dict[i] == res_max]
     return result
 
-# @app.route('/',methods=['GET'] )
-# def home():
-#     return 'deployed'
 
-# @app.route('/predict',methods=['POST'])
-# def predict():
-#     default_name = 'experience'
-#     json_data = request.form.to_dict(flat=False)
-#     data_frame = json_to_dataframe(json_data)
-#     test_data = data_frame.values
-#     test_data = scale_model.transform(test_data)
-#     model1_predictions = model1.predict(test_data)
-#     model2_predictions = model2.predict(test_data)
-#     model3_predictions = model3.predict(test_data)
-#     model1_res = max_count(model1_predictions)
-#     model2_res = max_count(model2_predictions)
-#     model3_res = max_count(model3_predictions)
-#     output = {'1':ges_list[model1_res[0]], '2':ges_list[model2_res[0]], '3':ges_list[model3_res[0]]}
-#     return render_template('home.html', prediction_text='Prediction is {}'.format(output))
-
+""" Function to predict the given test-json obtained using POST request """
 @app.route('/',methods=['POST'])
 def predict_api():
+    """Getting the given json-object"""
     json_data = request.get_json()
-    # print(type(json_data))
+
+    """Convert json to numpy array"""
     data_frame = json_to_dataframe(json_data)
     test_data = data_frame.values
+
+    """Applying trained PCA model and Scaled-model on test-data"""
     test_data = pca_model.transform(test_data)
     test_data = scale_model.transform(test_data)
+
+    """Getting Predictions to test-data by using 4-trained Machine Learning Models """
     model1_predictions = model1.predict(test_data)
     model2_predictions = model2.predict(test_data)
     model3_predictions = model3.predict(test_data)
@@ -101,8 +68,11 @@ def predict_api():
     model2_res = max_count(model2_predictions)
     model3_res = max_count(model3_predictions)
     model4_res = max_count(model4_predictions)
+
+    """Storing the output in dictionary"""
     output = {'1':ges_list[model1_res[0]], '2':ges_list[model2_res[0]],
               '3':ges_list[model3_res[0]], '4':ges_list[model4_res[0]]}
+
     return jsonify(output)
 
 

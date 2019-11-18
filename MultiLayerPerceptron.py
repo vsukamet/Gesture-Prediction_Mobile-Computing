@@ -19,7 +19,6 @@ class MultiLayerPerceptron:
 
     def train_model(self):
         self.model.fit(self.x_train, self.y_train)
-        print('MLP train')
 
     def predict_test(self):
         self.y_pred = self.model.predict(self.x_test)

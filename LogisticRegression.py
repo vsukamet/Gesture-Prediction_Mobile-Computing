@@ -4,6 +4,7 @@ import numpy as np
 import warnings
 
 warnings.filterwarnings("ignore", category=FutureWarning)
+
 class LogisticReg:
     def __init__(self, x_train, y_train, x_test, y_test):
         self.x_train = x_train
@@ -17,7 +18,6 @@ class LogisticReg:
 
     def train_model(self):
         self.model.fit(self.x_train, self.y_train)
-        print('LR train')
 
     def predict_test(self):
         self.y_pred = self.model.predict(self.x_test)

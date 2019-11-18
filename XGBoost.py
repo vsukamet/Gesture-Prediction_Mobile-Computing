@@ -23,7 +23,6 @@ class XGBoost:
 
     def train_model(self):
         self.model.fit(self.x_train, self.y_train)
-        print('xgb train')
 
     def predict_test(self, x_test = None):
         self.y_pred = self.model.predict(self.x_test)
