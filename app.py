@@ -8,12 +8,12 @@ import ast
 
 app = Flask(__name__)
 
-model1 = pickle.load(open('DT.pkl', 'rb'))
-model2 = pickle.load(open('XGB.pkl', 'rb'))
-model3 = pickle.load(open('MLP.pkl', 'rb'))
-model4= pickle.load(open('LR.pkl', 'rb'))
-scale_model = pickle.load(open('Scaled_model.pkl','rb'))
-
+model1 = pickle.load(open('DT1.pkl', 'rb'))
+model2 = pickle.load(open('XGB1.pkl', 'rb'))
+model3 = pickle.load(open('MLP1.pkl', 'rb'))
+model4= pickle.load(open('LR1.pkl', 'rb'))
+pca_model = pickle.load(open('pca_model.pkl','rb'))
+scale_model = pickle.load(open('Scaled_model1.pkl','rb'))
 ges_list = {1:'buy', 2:'communicate', 3:'fun', 4:'hope', 5:'mother', 6:'really'}
 
 
@@ -91,6 +91,7 @@ def predict_api():
     # print(type(json_data))
     data_frame = json_to_dataframe(json_data)
     test_data = data_frame.values
+    test_data = pca_model.transform(test_data)
     test_data = scale_model.transform(test_data)
     model1_predictions = model1.predict(test_data)
     model2_predictions = model2.predict(test_data)
