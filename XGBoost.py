@@ -18,6 +18,7 @@ class XGBoost:
                                    'silent': [1],
                                    'nthread': [4],
                                    'subsample': [0.8]}
+
         self.model = XGBClassifier()
         self.model = GridSearchCV(self.model, self.grid_params, cv=10)
 
