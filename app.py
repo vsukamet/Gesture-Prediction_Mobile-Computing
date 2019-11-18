@@ -27,6 +27,8 @@ def json_to_dataframe(packet):
         for key_points in row[1]:
             vals = list(key_points.values())
             temp.append(vals[0])
+            print("The test debug",vals)
+            print("The vals[2]",vals[2])
             vals[2] = str(vals[2])
             if type(vals[2]) is str:
                 vals[2] = eval(vals[2])
