@@ -190,6 +190,7 @@ def max_count(predictions):
 def predict_api():
     splits = 10
     json_data = request.json
+    print(json_data)
     video = json_to_dataframe(json_data)
     print(video)
     feature_vector = []
