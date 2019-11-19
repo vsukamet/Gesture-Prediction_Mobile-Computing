@@ -13,7 +13,7 @@ model2 = pickle.load(open('XGB.pkl', 'rb'))
 model3 = pickle.load(open('MLP.pkl', 'rb'))
 model4= pickle.load(open('LR.pkl', 'rb'))
 # pca_model = pickle.load(open('pca_model.pkl','rb'))
-scale_model = pickle.load(open('Scaled_model.pkl','rb'))
+scale_model = pickle.load(open('Scaled_model1.pkl','rb'))
 
 ges_list = {1:'buy', 2:'communicate', 3:'fun', 4:'hope', 5:'mother', 6:'really'}
 
