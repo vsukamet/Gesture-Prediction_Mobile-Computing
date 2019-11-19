@@ -119,6 +119,7 @@ import pandas as pd
 import pickle
 import numpy as np
 from numpy.fft import fft
+import json
 from sklearn.preprocessing import scale
 
 def compute_fft(vector):
@@ -191,8 +192,11 @@ def predict_api():
     splits = 10
     json_data = request.json
     print(json_data)
+
+    with open('data.json', 'w') as f:
+        json.dump(json_data, f)
     video = json_to_dataframe(json_data)
-    print(video)
+    # print(video)
     feature_vector = []
 
     # FFT
