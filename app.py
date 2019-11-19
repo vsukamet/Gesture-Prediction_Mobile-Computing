@@ -2,18 +2,19 @@ from collections import Counter
 from flask import Flask, request, jsonify
 import pandas as pd
 import pickle
+import numpy as np
 
 app = Flask(__name__)
 
 """ Getting all the pickle files(must present in same directory)
     which gives the trained Machine-learning Models """
 
-model1 = pickle.load(open('DT.pkl', 'rb'))
-model2 = pickle.load(open('XGB.pkl', 'rb'))
-model3 = pickle.load(open('MLP.pkl', 'rb'))
-model4= pickle.load(open('LR.pkl', 'rb'))
+model1 = pickle.load(open('RF_rp.pkl', 'rb'))
+model2 = pickle.load(open('XGB_rp.pkl', 'rb'))
+model3 = pickle.load(open('SVM_rp.pkl', 'rb'))
+model4= pickle.load(open('LR_rp.pkl', 'rb'))
 # pca_model = pickle.load(open('pca_model.pkl','rb'))
-scale_model = pickle.load(open('Scaled_model.pkl','rb'))
+scale_model = pickle.load(open('Scaled_model_rp.pkl','rb'))
 
 ges_list = {1:'buy', 2:'communicate', 3:'fun', 4:'hope', 5:'mother', 6:'really'}
 
@@ -46,33 +47,63 @@ def max_count(predictions):
 
 
 """ Function to predict the given test-json obtained using POST request """
+# @app.route('/',methods=['POST'])
+# def predict_api():
+#     """Getting the given json-object"""
+#     json_data = request.get_json()
+#
+#     """Convert json to numpy array"""
+#     data_frame = json_to_dataframe(json_data)
+#     test_data = data_frame.values
+#
+#     """Applying trained PCA model and Scaled-model on test-data"""
+#     # test_data = pca_model.transform(test_data)
+#     test_data = scale_model.transform(test_data)
+#
+#     """Getting Predictions to test-data by using 4-trained Machine Learning Models """
+#     model1_predictions = model1.predict(test_data)
+#     model2_predictions = model2.predict(test_data)
+#     model3_predictions = model3.predict(test_data)
+#     model4_predictions = model4.predict(test_data)
+#     model1_res = max_count(model1_predictions)
+#     model2_res = max_count(model2_predictions)
+#     model3_res = max_count(model3_predictions)
+#     model4_res = max_count(model4_predictions)
+#
+#     """Storing the output in dictionary"""
+#     output = {'1':ges_list[model1_res[0]], '2':ges_list[model2_res[0]],
+#               '3':ges_list[model3_res[0]], '4':ges_list[model4_res[0]]}
+#
+#     return jsonify(output)
 @app.route('/',methods=['POST'])
 def predict_api():
-    """Getting the given json-object"""
-    json_data = request.get_json()
-
-    """Convert json to numpy array"""
+    splits = 10
+    json_data = request.json
     data_frame = json_to_dataframe(json_data)
-    test_data = data_frame.values
-
-    """Applying trained PCA model and Scaled-model on test-data"""
+    data_frame = data_frame.iloc[:,1:35]
+    df_mean = pd.DataFrame(index=range(splits), columns=data_frame.columns)
+    df_std = pd.DataFrame(index=range(splits), columns=data_frame.columns)
+    df_split = np.array_split(data_frame,splits)
+    for i in range(len(df_split)):
+        df_mean.at[i] = np.mean(df_split[i])
+        df_std.at[i] = np.std(df_split[i])
+    feature_vector = np.concatenate((df_mean.values.flatten(), df_std.values.flatten()))
+    test_data = feature_vector.reshape(1,feature_vector.shape[0])
     # test_data = pca_model.transform(test_data)
     test_data = scale_model.transform(test_data)
-
-    """Getting Predictions to test-data by using 4-trained Machine Learning Models """
     model1_predictions = model1.predict(test_data)
     model2_predictions = model2.predict(test_data)
     model3_predictions = model3.predict(test_data)
     model4_predictions = model4.predict(test_data)
-    model1_res = max_count(model1_predictions)
-    model2_res = max_count(model2_predictions)
-    model3_res = max_count(model3_predictions)
-    model4_res = max_count(model4_predictions)
-
-    """Storing the output in dictionary"""
-    output = {'1':ges_list[model1_res[0]], '2':ges_list[model2_res[0]],
-              '3':ges_list[model3_res[0]], '4':ges_list[model4_res[0]]}
-
+    # print(model4_predictions)
+    # model1_res = max_count(model1_predictions)
+    # model2_res = max_count(model2_predictions)
+    # model3_res = max_count(model3_predictions)
+    # model4_res = max_count(model4_predictions)
+    # output = {'1':ges_list[model1_res[0]], '2':ges_list[model2_res[0]],
+    #           '3':ges_list[model3_res[0]], '4':ges_list[model4_res[0]]}
+    output = {'1':ges_list[model1_predictions[0]],'2':ges_list[model2_predictions[0]],
+              '3':ges_list[model3_predictions[0]],'4':ges_list[model4_predictions[0]]}
     return jsonify(output)
 
 
