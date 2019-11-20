@@ -1,8 +1,8 @@
 from sklearn.model_selection import train_test_split
-from DecisionTree import DecisionTree
+from LDA import LDA
 from MultiLayerPerceptron import MultiLayerPerceptron
 from LogisticRegression import LogisticReg
-from XGBoost import XGBoost
+from SupportVectorMachine import SupportVectorMachine
 
 class ModelClassification:
 
@@ -25,8 +25,8 @@ class ModelClassification:
     """ Model to call corresponding models """
     def get_trained_model(self):
 
-        if self.model_name == 'MLP':
-            self.model = MultiLayerPerceptron(self.x_train, self.y_train, self.x_test, self.y_test)
+        if self.model_name == 'LDA':
+            self.model = LDA(self.x_train, self.y_train, self.x_test, self.y_test)
             self.model.train_model()
 
 
@@ -35,16 +35,17 @@ class ModelClassification:
             self.model.train_model()
 
 
-        elif self.model_name == 'DT':
-            self.model = DecisionTree(self.x_train, self.y_train, self.x_test, self.y_test)
+        elif self.model_name == 'MLP':
+            self.model = MultiLayerPerceptron(self.x_train, self.y_train, self.x_test, self.y_test)
             self.model.train_model()
 
 
-        elif self.model_name == 'XGB':
-            self.model = XGBoost(self.x_train, self.y_train, self.x_test, self.y_test)
+        elif self.model_name == 'SVM':
+            self.model = SupportVectorMachine(self.x_train, self.y_train, self.x_test, self.y_test)
             self.model.train_model()
 
         return self.model.get_model()
+
 
     def get_model(self):
         return self.model.get_model()
