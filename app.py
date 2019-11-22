@@ -2,19 +2,7 @@ from collections import Counter
 from flask import Flask, request, jsonify
 import pandas as pd
 import pickle
-import numpy as np
-from numpy.fft import fft
 from DataPreprocessing import get_feature_vector
-
-
-def compute_fft(vector):
-    max_points_per_series = 10
-    fft_res = np.absolute(fft(vector, max_points_per_series))
-    return fft_res.tolist()
-
-
-def compute_std(vector):
-    return np.std(vector)
 
 
 app = Flask(__name__)
